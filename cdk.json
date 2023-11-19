@@ -1,5 +1,5 @@
 {
-  "app": "npx ts-node --prefer-ts-exts bin/nodejs-aws-shop-react-be.ts",
+  "app": "npx ts-node --prefer-ts-exts bin/nodejs-aws-shop-react-be.cjs",
   "watch": {
     "include": [
       "**"

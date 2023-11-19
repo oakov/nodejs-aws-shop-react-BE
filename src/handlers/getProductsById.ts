@@ -9,7 +9,7 @@ export const handler = async (
     const productId = event.pathParameters?.id;
     console.log(productId);
     if (!productId) {
-      return sendResponse(404, 'Product not found');
+      return sendResponse(401, 'Product not found');
     }
     
     const product = productData.find((p) => p.id == productId);

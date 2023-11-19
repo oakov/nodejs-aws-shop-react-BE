@@ -2,7 +2,6 @@ import * as cdk from 'aws-cdk-lib';
 import { Function, Runtime, Code } from "aws-cdk-lib/aws-lambda";
 import { Cors, LambdaIntegration, LambdaIntegrationOptions, RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { Construct } from "constructs";
-import { CfnOutput } from "aws-cdk-lib/core";
 
 export class NodejsAwsShopReactBeStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {

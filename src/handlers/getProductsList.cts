@@ -2,7 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import productData from '../data/data';
 import { sendResponse } from './utils';
 
-const handler = async function( event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+export const handler = async ( event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   try {
     return sendResponse(200, productData);
   } catch (err: unknown) {
@@ -10,5 +10,3 @@ const handler = async function( event: APIGatewayProxyEvent): Promise<APIGateway
     return sendResponse(500, error.message);
   }
 };
-
-module.exports = handler;

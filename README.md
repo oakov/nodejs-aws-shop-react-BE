@@ -1,14 +1,7 @@
-# Welcome to your CDK TypeScript project
+Deploy link
+Product Service URL: https://snvxkhl876.execute-api.eu-west-1.amazonaws.com/dev/products
 
-This is a blank project for CDK development with TypeScript.
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
-
-## Useful commands
-
-* `npm run build`   compile typescript to js
-* `npm run watch`   watch for changes and compile
-* `npm run test`    perform the jest unit tests
-* `npx cdk deploy`  deploy this stack to your default AWS account/region
-* `npx cdk diff`    compare deployed stack with current state
-* `npx cdk synth`   emits the synthesized CloudFormation template
+Lambda handlers are covered by basic UNIT tests 
+Lambda handlers (getProductsList, getProductsById) code is written not in 1 single module (file) and separated in codebase.
+Main error scenarios are handled by API

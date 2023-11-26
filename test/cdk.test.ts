@@ -13,10 +13,10 @@ describe("Tests for Lambdas/API Gateway", () => {
 
         template.resourceCountIs(resourceType, 2);
         template.hasResourceProperties(resourceType, {
-            Handler: "getProductsList.handler"
+            Handler: "index.handler"
         })
         template.hasResourceProperties(resourceType, {
-            Handler: "getProductsById.handler"
+            Handler: "index.handler"
         })
     })
 

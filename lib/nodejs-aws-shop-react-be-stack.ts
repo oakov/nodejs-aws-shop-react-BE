@@ -4,35 +4,33 @@ import { Cors, LambdaIntegration, LambdaIntegrationOptions, RestApi } from 'aws-
 import { Construct } from "constructs";
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import path = require('path');
+import { Role, ServicePrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 export class NodejsAwsShopReactBeStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
-
-    // example resource
-    // const queue = new sqs.Queue(this, 'NodejsAwsShopReactBeQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
-
-    // const getAllProducts = new Function(this, "GetAllProducts", {
-    //     runtime: Runtime.NODEJS_18_X,
-    //     code: Code.fromAsset("./dist/getProductsList"),
-    //     handler: "getProductsList.handler"
-    // })
+    
+    const role = new Role(this, "dynamodbAccessRole", {
+      assumedBy: new ServicePrincipal("lambda.amazonaws.com"),
+    });
+    
+    role.addToPolicy(
+      new PolicyStatement({
+        actions: ["dynamodb:*", "logs:PutLogEvents"],
+        resources: ["*"],
+      })
+      );
       
-    // const getOneProduct = new Function(this, "GetOneProduct", {
-    //     runtime: Runtime.NODEJS_18_X,
-    //     code: Code.fromAsset("./dist/getProductsById"),
-    //     handler: "getProductsById.handler"
-    // })
-
-    const lambdaGeneralProps = {
-        runtime: Runtime.NODEJS_18_X,
-        handler: "handler",
-      };
-
+      const lambdaGeneralProps = {
+          runtime: Runtime.NODEJS_18_X,
+          handler: "handler",
+          environment: {
+            PRODUCTS_TABLE_NAME: process.env.PRODUCTS_TABLE_NAME!,
+            STOCKS_TABLE_NAME: process.env.STOCKS_TABLE_NAME!,
+          },
+          role,
+        };
     const getAllProducts = new NodejsFunction(this, "getProductsList", {
         ...lambdaGeneralProps,
         entry: path.join(__dirname + "/../src/handlers/getProductsList.ts"),
@@ -42,12 +40,18 @@ export class NodejsAwsShopReactBeStack extends cdk.Stack {
         ...lambdaGeneralProps,
         entry: path.join(__dirname + "/../src/handlers/getProductsById.ts"),
       });
+
+      const createProduct = new NodejsFunction(this, "createProduct", {
+        ...lambdaGeneralProps,
+        entry: path.join(__dirname + "/../src/handlers/createProduct.ts"),
+      });
       
     const integrationOptions = <LambdaIntegrationOptions>{
         allowTestInvoke: false,
     }
     const getAllProductsIntegration = new LambdaIntegration(getAllProducts, integrationOptions);
     const getOneProductIntegration = new LambdaIntegration(getOneProduct, integrationOptions);
+    const createProductIntegration = new LambdaIntegration(createProduct);
       
     const api = new RestApi(this, "ProductApi", {
         restApiName: "Products",
@@ -62,6 +66,7 @@ export class NodejsAwsShopReactBeStack extends cdk.Stack {
               
     const products = api.root.addResource("products");
     products.addMethod("GET", getAllProductsIntegration);
+    products.addMethod("POST", createProductIntegration);
       
     const oneProduct = products.addResource("{id}");
     oneProduct.addMethod("GET", getOneProductIntegration);

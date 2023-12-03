@@ -1,9 +1,10 @@
+import "dotenv/config";
 import * as cdk from 'aws-cdk-lib';
 import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { Cors, LambdaIntegration, LambdaIntegrationOptions, RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { Construct } from "constructs";
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import path = require('path');
+import * as path from 'path';
 import { Role, ServicePrincipal, PolicyStatement } from 'aws-cdk-lib/aws-iam';
 
 export class NodejsAwsShopReactBeStack extends cdk.Stack {

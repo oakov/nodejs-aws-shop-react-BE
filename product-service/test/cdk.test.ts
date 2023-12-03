@@ -11,7 +11,7 @@ describe("Tests for Lambdas/API Gateway", () => {
     test("Two Lambda functions are defined", () => {
         resourceType = "AWS::Lambda::Function";
 
-        template.resourceCountIs(resourceType, 2);
+        template.resourceCountIs(resourceType, 3);
         template.hasResourceProperties(resourceType, {
             Handler: "index.handler"
         })

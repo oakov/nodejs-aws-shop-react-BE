@@ -2,14 +2,13 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { sendResponse } from './utils';
 import { DynamoDBClient, ScanCommand } from '@aws-sdk/client-dynamodb';
 import { unmarshall } from "@aws-sdk/util-dynamodb";
-import * as dotenv from "dotenv";
-
-dotenv.config();
+// import * as dotenv from "dotenv";
+// dotenv.config();
 
 export const handler = async ( event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   console.log(`REQUEST: ${event.httpMethod}, ${event.path}`);
   const productParams = {
-    TableName: "ProductTable" //process.env.PRODUCTS_TABLE_NAME || "",
+    TableName: process.env.PRODUCTS_TABLE_NAME || "",
   };
   const stockParams = {
     TableName: "StockTable" //process.env.STOCKS_TABLE_NAME || "",

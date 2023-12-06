@@ -2,6 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import * as AWS from 'aws-sdk';
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { ResponseHeadersPolicy } from "aws-cdk-lib/aws-cloudfront";
 
 const s3 = new AWS.S3();
 
@@ -30,16 +31,10 @@ export const handler = async ( event: APIGatewayProxyEvent): Promise<APIGatewayP
     });
 
         // Возвращаем Signed URL в ответе
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ signedUrl }),
-        };
+        return response(200, { signedUrl: signedUrl });
     } catch (error: unknown) {
         // В случае ошибки возвращаем соответствующий статус и сообщение об ошибке
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: error.message }),
-        };
+        return response(500, JSON.stringify({ error: error.message }));
     }
 };
 
@@ -61,3 +56,19 @@ const generateSignedUrl = async (fileName: string): Promise<string> => {
 
     return signedUrl.url;
 };
+
+const response = (
+    statusCode: number = 200,
+    body?: unknown,
+  ) => {
+    return {
+      statusCode,
+      body: JSON.stringify(body || {}),
+      headers: {
+        'Access-Control-Allow-Methods': '*',
+        'Access-Control-Allow-Headers': '*',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Credentials': true,
+      },
+    };
+  };    

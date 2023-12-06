@@ -5,7 +5,7 @@ import { Construct } from 'constructs';
 import path = require('path');
 import { PolicyStatement, Effect } from 'aws-cdk-lib/aws-iam';
 import { LambdaIntegration, RestApi, Cors } from 'aws-cdk-lib/aws-apigateway';
-import { Bucket, EventType } from 'aws-cdk-lib/aws-s3';
+import { Bucket, EventType, HttpMethods } from 'aws-cdk-lib/aws-s3';
 import { LambdaDestination } from "aws-cdk-lib/aws-s3-notifications";
 
 export class ImportServiceStack extends cdk.Stack {
@@ -45,31 +45,14 @@ export class ImportServiceStack extends cdk.Stack {
           stageName: "dev",
       },
       defaultCorsPreflightOptions: {
-          allowOrigins: Cors.ALL_ORIGINS,
-          allowMethods: Cors.ALL_METHODS,
-          allowHeaders: Cors.DEFAULT_HEADERS,
-      }
+        allowHeaders: ['*'],
+        allowOrigins: ['*'],
+        allowMethods: [HttpMethods.GET, HttpMethods.PUT]
+    },
     });
             
     const products = api.root.addResource("import");
-    products.addMethod('GET', importProductsIntegration, {
-      methodResponses: [
-      {
-          statusCode: '200',
-          responseParameters: {
-          'method.response.header.Access-Control-Allow-Origin': true,
-          'method.response.header.Access-Control-Allow-Credentials': true,
-          },
-      },
-      {
-          statusCode: '400',
-          responseParameters: {
-          'method.response.header.Access-Control-Allow-Origin': true,
-          'method.response.header.Access-Control-Allow-Credentials': true,
-          },
-      },
-      ],
-  });
+    products.addMethod('GET', importProductsIntegration );
 
     const s3Bucket = Bucket.fromBucketName(
       this,
@@ -83,5 +66,8 @@ export class ImportServiceStack extends cdk.Stack {
       { prefix: "uploaded/" }
     );
 
+    s3Bucket.grantReadWrite(importProducts);
+    s3Bucket.grantReadWrite(importFileParser);
+    s3Bucket.grantDelete(importFileParser);
   }
 }

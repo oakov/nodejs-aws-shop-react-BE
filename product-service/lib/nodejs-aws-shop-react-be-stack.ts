@@ -61,13 +61,13 @@ export class NodejsAwsShopReactBeStack extends cdk.Stack {
         },
         defaultCorsPreflightOptions: {
             allowOrigins: Cors.ALL_ORIGINS,
-            allowMethods: ["GET", "OPTIONS"]
+            allowMethods: ["GET", "OPTIONS", "PUT"]
         }
     });
               
     const products = api.root.addResource("products");
     products.addMethod("GET", getAllProductsIntegration);
-    products.addMethod("POST", createProductIntegration);
+    products.addMethod("PUT", createProductIntegration);
       
     const oneProduct = products.addResource("{id}");
     oneProduct.addMethod("GET", getOneProductIntegration);

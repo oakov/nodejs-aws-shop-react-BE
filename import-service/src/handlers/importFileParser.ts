@@ -56,11 +56,20 @@ export const handler = async (event: S3Event) => {
   return response(200, { message: "File parsed successfully" });
 };
 
-const response = (statusCode: number, body: any) => ({
-    statusCode: statusCode,
+const response = (
+  statusCode: number = 200,
+  body?: unknown,
+  headers?: object
+) => {
+  return {
+    statusCode,
+    body: JSON.stringify(body || {}),
     headers: {
-        'Access-Control-Allow-Origin': "*",
-        'Access-Control-Allow-Headers': "*"
+      'Access-Control-Allow-Methods': '*',
+      'Access-Control-Allow-Headers': '*',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Credentials': true,
+      ...headers,
     },
-    body: JSON.stringify(body)
-})
+  };
+};
